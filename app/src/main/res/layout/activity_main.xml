@@ -28,7 +28,6 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-
         android:id="@+id/passwordText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -48,30 +47,23 @@
         />
 
     <Button
-        android:id="@+id/entrar"
+        android:id="@+id/login"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginTop="260dp"
         android:layout_marginEnd="32dp"
-        android:drawableTint="#230505"
-
         android:text="Entrar"
         android:enabled="false"
         android:background="@drawable/select_btn"
         android:textAlignment="center"
-        android:textAllCaps="false"
-        android:textAppearance="@style/TextAppearance.AppCompat.Display3"
-        android:textColor="#9A9393"
-        android:textColorHighlight="#9C2020"
-        android:textColorLink="#000000"
         android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/passwordText"
-        app:rippleColor="#000000" />
+      />
 
 
     <TextView
@@ -89,7 +81,8 @@
         app:layout_constraintBottom_toTopOf="@+id/emailText"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        />
 
     <ImageButton
         android:id="@+id/exitApp"
@@ -122,7 +115,7 @@
         android:text="Recordar"
         android:thumbTint="#FF5722"
         android:trackTint="#FF5722"
-        app:layout_constraintBottom_toTopOf="@+id/entrar"
+        app:layout_constraintBottom_toTopOf="@+id/login"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/passwordText" />
