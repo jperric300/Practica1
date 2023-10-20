@@ -1,147 +1,193 @@
 package com.example.mylog_inapplication
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
+import android.os.Handler
+import android.os.Looper
 import android.view.KeyEvent
+import android.view.View
 import android.view.inputmethod.EditorInfo
-import android.widget.Button
-import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.TextView.OnEditorActionListener
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.AppCompatButton
+import com.example.mylog_inapplication.data.User
+import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 
 
 class MainActivity : AppCompatActivity() {
 
-   lateinit var exitApp : ImageButton
-    lateinit var emailText : EditText
-    lateinit var passwordText : EditText
-    lateinit var login : Button
+    private lateinit var exitApp: ImageButton
+    private lateinit var emailText: TextInputEditText
+    private lateinit var passwordText: TextInputEditText
+    private lateinit var login: AppCompatButton
+    private var checkEmail: Boolean = false
+    private var checkPass: Boolean = false
+    private lateinit var passLayout: TextInputLayout
+
+    //------------------------------------------------------
+    //EXPRESIONES REGULARES
+    //------------------------------------------------------
+    private val reEmail = "^[A-Za-z0-9+_.-]+@(.+)$".toRegex()
+    private val ncharacter = """^.{6,8}$""".toRegex()
+    private val upperC = ".*[A-Z].*".toRegex()
+    private val lowerC = ".*[a-z].*".toRegex()
+    private val number = Regex(".*\\d+.*")
+    private fun Intent.putExtra(userList: List<User>) {
+
+    }
+
+    private fun credentials(email: String, password: String): Boolean {
+
+        data class User(val name: String, val email: String, val password: String)
+
+        val userList = listOf(
+            User("Jesus Miguel", "jesus@gmail.com", "123456Aa"),
+            User("Admin", "admin@gmail.com", "123456Ab"),
+
+            )
+
+        val user = userList.find { it.email == email }
+        return user?.password == password
+    }
+
+    private fun bindViews() {
+
+        exitApp = findViewById(R.id.exitApp)
+        emailText = findViewById(R.id.emailText)
+        passwordText = findViewById(R.id.passwordText)
+        login = findViewById(R.id.login)
+        passLayout=findViewById(R.id.passwordInputLayout)
+
+    }
+
+    private fun functionCheckEmail(emailText: TextInputEditText, reEmail: Regex): Boolean {
+
+        var result: Boolean = false;
+        if (!emailText.text.toString().matches(reEmail)) {
+            emailText.setError("no es un email válido")
+        } else {
+            emailText.setError(null)
+            result = true
+        }
+        return result;
+    }
+
+    private fun checkData(checkPass: Boolean, checkEmail: Boolean): Boolean {
+        var result: Boolean = false;
+        result = checkEmail && checkPass
+        return result;
+    }
+
+    private fun functionCheckPassword(
+        passwordText: TextInputEditText, characterRankReg: Regex, upperC: Regex,
+        lowerC: Regex, number: Regex
+    ): Boolean {
+        var result: Boolean = false;
+
+        if (!passwordText.text.toString().matches(characterRankReg)) {
+            passwordText.setError("la contraseña debe contener entre 6 y 8 dígitos")
+        } else if (!passwordText.text.toString().matches(upperC)) {
+            passwordText.setError("la contraseña debe contener como minimo una mayuscula")
+        } else if (!passwordText.text.toString().matches(lowerC)) {
+            passwordText.setError("la contraseña debe contener como minimo una minuscula")
+        } else if (!passwordText.text.toString().matches(number)) {
+            passwordText.setError("la contraseña debe contener como minimo un numero")
+        } else {
+            passwordText.setError(null)
+            result = true;
+        }
+        return result;
+    }
+
+    private fun toastError(context: Context) {
+        val errorMessage = "Credenciales incorrectas"
+        val duration = Toast.LENGTH_SHORT
+
+        val toast = Toast.makeText(context, errorMessage, duration)
+        toast.show()
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        exitApp = this.findViewById(R.id.exitApp)
-
-       exitApp.setOnClickListener {
+        bindViews()
+        exitApp.setOnClickListener {
             finishAffinity()
         }
 
-        emailText = this.findViewById(R.id.emailText)
-        passwordText = this.findViewById(R.id.passwordText)
-        login = this.findViewById(R.id.login)
 
-        emailText.addTextChangedListener(object : TextWatcher{
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-
-            }
-
-
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-
-            }
-
-            override fun afterTextChanged(p0: Editable?) {
-                if(emailText.length() >= 1){
-                    login.isEnabled = true
-                }else{
-                    login.isEnabled = false
-                }
-            }
-
-
-        }
-        )
-
-        login.setOnClickListener {
-
-            if (emailText.text.toString().length==0){
-                Toast.makeText(this, "el email no puede estar vacío",Toast.LENGTH_LONG).show()
-            }
-
-            else if (passwordText.text.toString().length==0){
-                Toast.makeText(this, "la contraseña no puede estar vacía",Toast.LENGTH_LONG).show()
-            }
-            else if (passwordText.text.toString().length<6||passwordText.text.toString().length>8){
-                Toast.makeText(this, "la contraseña debe contener entre 6 y 8 caracteres",Toast.LENGTH_LONG).show()
-            }
-
-        }
-
-
-
-        ////Validar contraseña
-
-        val checkPass : Boolean =false
-
-        //entre 6 y 8
-        val ncharacter = Regex("^{6,8}$")
-
-        //una mayuscula
-        val upperC = Regex(".*[A-Z].*")
-
-        //una minuscula
-        val lowerC = Regex(".*[a-z].*")
-
-        //un numero
-        val number = Regex(".*\\d+.*")
-
-        passwordText.setOnEditorActionListener(OnEditorActionListener { textView, actionId, keyEvent ->
-            if (actionId == EditorInfo.IME_ACTION_DONE || keyEvent.action == KeyEvent.ACTION_DOWN || keyEvent.action == KeyEvent.KEYCODE_ENTER) {
-
-                if(!ncharacter.containsMatchIn(passwordText.toString())) {
-                    passwordText.setError("la contraseña debe contener entre 6 y 8 dígitos")
-                }else if(!upperC.containsMatchIn(passwordText.toString())){
-                    passwordText.setError("la contraseña debe contener como minimo una mayuscula")
-                }else if(!lowerC.containsMatchIn(passwordText.toString())) {
-                    passwordText.setError("la contraseña debe contener como minimo una minuscula")
-                }else if(!number.containsMatchIn(passwordText.toString())) {
-                    passwordText.setError("la contraseña debe contener como minimo un numero")
-                }else{
-                    passwordText.setError(null)
-                    checkPass == true
-                    }
-
-                    false
-
-                }
-
-                return@OnEditorActionListener true
-
-            false
-        })
-
-
-//Validar email
-
-
-        val checkEmail : Boolean =false
-
-
-        val reEmail = Regex("^[A-Za-z0-9+_.-]+@(.+)$")
+        //------------------------------------------------------------------------------------------
+        //Validar email
+        //------------------------------------------------------------------------------------------
 
         emailText.setOnEditorActionListener(OnEditorActionListener { textView, actionId, keyEvent ->
             if (actionId == EditorInfo.IME_ACTION_DONE || keyEvent.action == KeyEvent.ACTION_DOWN || keyEvent.action == KeyEvent.KEYCODE_ENTER) {
-
-                if(!reEmail.containsMatchIn(emailText.toString())){
-                  emailText.setError("no es un email válido")
-                }else{
-                    emailText.setError(null)
-                    checkEmail == true
-                }
-
-                false
-
+                checkEmail = functionCheckEmail(emailText, reEmail)
+                checkPass = functionCheckPassword(passwordText, ncharacter, upperC, lowerC, number)
+                login.isEnabled = checkData(checkPass, checkEmail)
+                passwordText.requestFocus()
             }
-
             return@OnEditorActionListener true
-
             false
         })
+
+        //------------------------------------------------------------------------------------------
+        ////Validar contraseña
+        //------------------------------------------------------------------------------------------
+
+        passwordText.setOnEditorActionListener(OnEditorActionListener { textView, actionId, keyEvent ->
+            if (actionId == EditorInfo.IME_ACTION_DONE || keyEvent.action == KeyEvent.ACTION_DOWN || keyEvent.action == KeyEvent.KEYCODE_ENTER) {
+                checkEmail = functionCheckEmail(emailText, reEmail)
+                checkPass = functionCheckPassword(passwordText, ncharacter, upperC, lowerC, number)
+                login.isEnabled = checkData(checkPass, checkEmail)
+                login.requestFocus()
+
+            }
+            return@OnEditorActionListener true
+            false
+        })
+
+
+        val userList = listOf(
+            User("Jesus Miguel", "jesus@gmail.com", "123456Aa"),
+            User("Admin", "admin@gmail.com", "123456Ab"),
+
+            )
+        login.setOnClickListener {
+
+            val email = emailText.text.toString()
+            val password = passwordText.text.toString()
+
+            if (credentials(email, password)) {
+                login.visibility = View.INVISIBLE
+
+                Handler(Looper.getMainLooper()).postDelayed({
+                    login.visibility = View.VISIBLE
+                }, 1000) // 1000 milisegundos = 1 segundo
+
+                val intent = Intent(this, PageHome::class.java)
+                intent.putExtra(userList)
+                startActivity(intent)
+
+            } else {
+
+                toastError(this)
+            }
+
+        }
 
 
     }
 }
+
+
+
+
+
+

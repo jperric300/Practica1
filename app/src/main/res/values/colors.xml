@@ -6,4 +6,7 @@
     <color name="not_avaliable">#DFDEDE</color>
     <color name="orange">#DF8A0D</color>
 
+    <color name="my_custom_color">#BDBDBD</color>
+
+
 </resources>
