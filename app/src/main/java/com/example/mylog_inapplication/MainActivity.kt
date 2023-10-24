@@ -36,9 +36,7 @@ class MainActivity : AppCompatActivity() {
     private val upperC = ".*[A-Z].*".toRegex()
     private val lowerC = ".*[a-z].*".toRegex()
     private val number = Regex(".*\\d+.*")
-    private fun Intent.putExtra(userList: List<User>) {
 
-    }
 
     private fun credentials(email: String, password: String): Boolean {
 
@@ -156,9 +154,15 @@ class MainActivity : AppCompatActivity() {
 
         val userList = listOf(
             User("Jesus Miguel", "jesus@gmail.com", "123456Aa"),
-            User("Admin", "admin@gmail.com", "123456Ab"),
-
+           User("Admin", "admin@gmail.com", "123456Ab"),
             )
+
+//        val userList = arrayListOf(
+//            User("Jesus Miguel", "jesus@gmail.com", "123456Aa"),
+//            User("Admin", "admin@gmail.com", "123456Ab"),
+//        )
+
+
         login.setOnClickListener {
 
             val email = emailText.text.toString()
@@ -169,9 +173,10 @@ class MainActivity : AppCompatActivity() {
 
                 Handler(Looper.getMainLooper()).postDelayed({
                     login.visibility = View.VISIBLE
-                }, 1000) // 1000 milisegundos = 1 segundo
+                }, 1000)
 
                 val intent = Intent(this, PageHome::class.java)
+               // intent.putExtra("userList", userList)
                 intent.putExtra(userList)
                 startActivity(intent)
 
@@ -184,6 +189,10 @@ class MainActivity : AppCompatActivity() {
 
 
     }
+}
+
+private fun Intent.putExtra(userList: List<User>) {
+
 }
 
 

@@ -122,7 +122,7 @@
         app:tint="#3C3C3C" />
 
     <com.google.android.material.switchmaterial.SwitchMaterial
-        android:id="@+id/switch2"
+        android:id="@+id/saveDate"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
